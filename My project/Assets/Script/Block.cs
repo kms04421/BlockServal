@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class Block
 {
- 
+
 }
 public enum BlockType { Air, Grass, Dirt }

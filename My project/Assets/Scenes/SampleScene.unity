@@ -318,6 +318,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1656512371}
   - component: {fileID: 1656512370}
+  - component: {fileID: 1656512372}
   m_Layer: 0
   m_Name: 'MapCreate '
   m_TagString: Untagged
@@ -337,11 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daed93de6324c8f4bb9b2e3ca253fece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 50
-  height: 50
-  scale: 10
-  grassTile: {fileID: 0}
-  waterTile: {fileID: 0}
+  terrainChunk: {fileID: 7634589800188603688, guid: 9071a690104c81f4cb5386e53b64bd1f, type: 3}
 --- !u!4 &1656512371
 Transform:
   m_ObjectHideFlags: 0
@@ -357,6 +354,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1656512372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1656512369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19c2e66a5ad62a46be4bc37b44eba03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteAtlas: {fileID: 4343727234628468602, guid: e9f90192f2113744a990a54e2e525a5d, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

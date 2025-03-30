@@ -228,10 +228,10 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blocks_preview_5
+      name: block0
       rect:
         serializedVersion: 2
-        x: 161
+        x: 160
         y: 80
         width: 79
         height: 80
@@ -249,7 +249,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blocks_preview_6
+      name: block1
       rect:
         serializedVersion: 2
         x: 241
@@ -270,7 +270,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blocks_preview_7
+      name: block2
       rect:
         serializedVersion: 2
         x: 321
@@ -301,14 +301,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      block0: 1348240790
+      block1: -1172630062
+      block2: -1554531887
       blocks_preview_0: 1090876425
       blocks_preview_1: 1135645957
       blocks_preview_2: 984230780
       blocks_preview_3: -470396365
       blocks_preview_4: -1647355772
-      blocks_preview_5: 1348240790
-      blocks_preview_6: -1172630062
-      blocks_preview_7: -1554531887
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

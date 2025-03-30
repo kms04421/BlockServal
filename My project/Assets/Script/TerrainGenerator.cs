@@ -79,7 +79,7 @@ public class TerrainGenerator : MonoBehaviour
         }
 
 
-      /*  if (caveNoise1 > Mathf.Max(caveMask, .2f))
+      /*  if (caveNoise1 > Mathf.Max(caveMask, .2f)) // µ¿±¼
             blockType = BlockType.Air;*/
 
         return blockType;
