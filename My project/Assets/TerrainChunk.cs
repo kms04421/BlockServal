@@ -32,7 +32,7 @@ public class TerrainChunk : MonoBehaviour
                             verts.Add(blockPos + new Vector3(1, 1, 0));
                             numFaces++;
 
-                            uvs.AddRange(GetTextureRect(1));
+                            uvs.AddRange(Block.blocks[blocks[x,y,z]].topTile.GetUvs());
                         }
                         //아래
                         if (y > 0 && blocks[x, y - 1, z] == BlockType.Air)
@@ -42,7 +42,7 @@ public class TerrainChunk : MonoBehaviour
                             verts.Add(blockPos + new Vector3(1, 0, 1));
                             verts.Add(blockPos + new Vector3(0, 0, 1));
                             numFaces++;
-                            uvs.AddRange(GetTextureRect(2));
+                            uvs.AddRange(Block.blocks[blocks[x, y, z]].bottmTile.GetUvs());
                         }
 
 
@@ -54,7 +54,7 @@ public class TerrainChunk : MonoBehaviour
                             verts.Add(blockPos + new Vector3(1, 1, 1));
                             verts.Add(blockPos + new Vector3(1, 0, 1));
                             numFaces++;
-                            uvs.AddRange(GetTextureRect(0));
+                            uvs.AddRange(Block.blocks[blocks[x, y, z]].sideTile.GetUvs());
                         }
 
                         //앞
@@ -65,7 +65,7 @@ public class TerrainChunk : MonoBehaviour
                             verts.Add(blockPos + new Vector3(1, 1, 0));
                             verts.Add(blockPos + new Vector3(1, 0, 0));
                             numFaces++;
-                            uvs.AddRange(GetTextureRect(0));
+                            uvs.AddRange(Block.blocks[blocks[x, y, z]].sideTile.GetUvs());
                         }
 
                         //뒤
@@ -76,7 +76,7 @@ public class TerrainChunk : MonoBehaviour
                             verts.Add(blockPos + new Vector3(0, 1, 1));
                             verts.Add(blockPos + new Vector3(0, 0, 1));
                             numFaces++;
-                            uvs.AddRange(GetTextureRect(0));
+                            uvs.AddRange(Block.blocks[blocks[x, y, z]].sideTile.GetUvs());
                         }
 
                         //왼쪽
@@ -87,7 +87,7 @@ public class TerrainChunk : MonoBehaviour
                             verts.Add(blockPos + new Vector3(0, 1, 0));
                             verts.Add(blockPos + new Vector3(0, 0, 0));
                             numFaces++;
-                            uvs.AddRange(GetTextureRect(0));
+                            uvs.AddRange(Block.blocks[blocks[x, y, z]].sideTile.GetUvs());
                         }
 
                         int tl = verts.Count - 4 * numFaces; //한면당 verts를 4개씩 추가하니까 verts.Count - 4 * numFaces를 할경우 가장 처음 추가한 정점값나옴
@@ -111,25 +111,5 @@ public class TerrainChunk : MonoBehaviour
         GetComponent<MeshRenderer>().material.mainTexture = SpriteAtlasManager.GetBlockSprite(0).texture;
         
     }
-    private Vector2[] GetTextureRect(int i)
-    {
-        Sprite blockSprite = SpriteAtlasManager.GetBlockSprite(i);
-        Rect textureRect = blockSprite.textureRect; // 상단 스프라이트
-        Texture tex = blockSprite.texture;
-        // 텍스처의 UV 좌표 계산
-        float uvXMin = textureRect.x / tex.width;
-        float uvXMax = (textureRect.x + textureRect.width) / tex.width;
-        float uvYMin = textureRect.y / tex.height;
-        float uvYMax = (textureRect.y + textureRect.height) / tex.height;
-
-        // UV 좌표 반환
-        return new Vector2[]
-        {
-           new Vector2(uvXMax, uvYMin), // 좌상
-        new Vector2(uvXMax, uvYMax), // 우상
-        new Vector2(uvXMin, uvYMax), // 우하
-        new Vector2(uvXMin, uvYMin)  // 좌하
-        };
-    }
-
+   
 }
