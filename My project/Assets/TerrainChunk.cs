@@ -107,7 +107,7 @@ public class TerrainChunk : MonoBehaviour
         mesh.RecalculateNormals();
         GetComponent<MeshFilter>().mesh = mesh;
        
-            // 텍스처 적용
+        // 텍스처 적용
         GetComponent<MeshRenderer>().material.mainTexture = SpriteAtlasManager.GetBlockSprite(0).texture;
         
     }

@@ -1,23 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class TerrainGenerator : MonoBehaviour
 {
+    public Transform player;
     public GameObject terrainChunk;
     FastNoise noise = new FastNoise(); //펄린노이즈를 빠르게 만들어주는 스크립트
-
+    int chunkDist = 1; //플레이어 근방 생성할 청크
+    List<ChunkPos> toGenerate = new List<ChunkPos>();
+    ChunkPos curChunk = new ChunkPos(-1, -1);
+    public static Dictionary<ChunkPos, TerrainChunk> chunks = new Dictionary<ChunkPos, TerrainChunk>();
     void Start()
     {
-        BulidChunk(10,10);
+        LoadChunks();
     }
-
-    void BulidChunk(int xPos, int zPos)
+ 
+    void BuildChunk(int xPos, int zPos)
     {
         TerrainChunk chunk;
         GameObject chunkGO = Instantiate(terrainChunk, new Vector3(xPos, 0, zPos), Quaternion.identity);
         chunk = chunkGO.GetComponent<TerrainChunk>();
+        chunkGO.transform.parent = transform;
         for (int x = 0; x < TerrainChunk.chunkWidth+2; x++)
         {
             for (int z = 0; z < TerrainChunk.chunkWidth+2; z++)
@@ -31,6 +36,9 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
         chunk.BuildMesh();
+        chunks.Add(new ChunkPos(xPos, zPos), chunk);
+
+
     }
     BlockType GetBlockType(int x, int y, int z)
     {
@@ -85,5 +93,63 @@ public class TerrainGenerator : MonoBehaviour
         return blockType;
 
     }
+    // 월드생성 
+    void LoadChunks(bool instant = false) //true면 바로 생성
+    {
+        //현재 플레이어 위치를 기준의 청크값 x,z값 가져옴
+        int curChunkPosX = Mathf.FloorToInt(player.position.x / 16) * 16; // 플레이어 위치 기준 소수를 내림하여 위치값 설정
+        int curChunkPosZ = Mathf.FloorToInt(player.position.z / 16) * 16;
 
+        //curChunk에 x,z값과 curChunkPosX,curChunkPosZ 값이 일치 하지 않으면 
+        if (curChunk.x != curChunkPosX || curChunk.z != curChunkPosZ)
+        {
+            curChunk.x = curChunkPosX;
+            curChunk.z = curChunkPosZ;
+            // 플레이어 근처 블럭 생성 
+            for (int i = curChunkPosX - 16 * chunkDist; i <= curChunkPosX + 16 * chunkDist; i += 16)
+                for (int j = curChunkPosZ - 16 * chunkDist; j <= curChunkPosZ + 16 * chunkDist; j += 16)
+                {
+                    ChunkPos cp = new ChunkPos(i, j);
+                    if (!chunks.ContainsKey(cp) && !toGenerate.Contains(cp))
+                    {
+                        if (instant)
+                        {
+                            BuildChunk(i, j);
+                        }
+                        else
+                        {
+                            toGenerate.Add(cp);
+                        }
+                    }
+                }
+            StartCoroutine(DelayBuildChunks());
+        }
+     
+    }
+    IEnumerator DelayBuildChunks() // 프레임 드랍 방지용 한프레임 내에서 한번에 생성되는거 방지
+    {
+        while (toGenerate.Count > 0)
+        {
+            BuildChunk(toGenerate[0].x, toGenerate[0].z);
+            toGenerate.RemoveAt(0);
+
+            yield return new WaitForSeconds(0.1f);
+
+        }
+
+    }
+
+
+
+
+}
+public struct ChunkPos
+{
+    public int x;
+    public int z;
+    public ChunkPos(int x,int z)
+    {
+        this.x = x;
+        this.z = z;
+    }
 }
