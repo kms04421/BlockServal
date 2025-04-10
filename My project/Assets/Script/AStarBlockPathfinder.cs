@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class AStarBlockPathfinder
 {
@@ -37,13 +39,11 @@ public class AStarBlockPathfinder
             }
 
             colseSet.Add(current.Pos);
-            
             foreach (Vector3Int dir in directions)
             {
                 Vector3Int neighborPos = current.Pos + dir; // 이동할 위치값
                 if (colseSet.Contains(neighborPos)) continue; // 이미 탐색한 경로일때
 
-                Debug.Log(neighborPos);
                 if (blocks[neighborPos.x, neighborPos.y, neighborPos.z] == BlockType.Air) continue; // 이동한 위치 블럭이 air일때 
 
                 if (!IsInBounds(neighborPos, width, height, depth)) continue; // 배열 벗어나는거 방지
@@ -64,6 +64,7 @@ public class AStarBlockPathfinder
 
             }
         }
+        Debug.Log("null");
         return null;
     }
     private bool IsInBounds(Vector3Int pos, int w, int y, int z) // 이동값이 배열 내부인지 확인
@@ -77,9 +78,8 @@ public class AStarBlockPathfinder
     {
         List<Vector3Int> path = new List<Vector3Int>();
         Node current = endPos;
-
-        while (current == null) //start지점까지 node부모 추가
-        {
+        while (current != null) //start지점까지 node부모 추가
+        {           
             path.Add(current.Pos); // 경로 담기
             current = current.Parent; // 현재 노드에 parent가 있다면 current에 적용 없으면 null
         }
