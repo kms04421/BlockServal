@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TerrainChunk : MonoBehaviour
 {
-    public const int chunkWidth = 16;
-    public const int chunkHeight = 64;
+    public static readonly int chunkWidth = 16;
+    public static readonly int chunkHeight = 64;
     public BlockType[,,] blocks = new BlockType[chunkWidth + 2, chunkHeight, chunkWidth + 2];
 
     public void BuildMesh()

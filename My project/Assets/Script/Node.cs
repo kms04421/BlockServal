@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class Node // 경로 탐색에 사용하는 노드 클래스
@@ -17,4 +18,6 @@ public class Node // 경로 탐색에 사용하는 노드 클래스
         G = g;
         H = h;
     }
+
+
 }

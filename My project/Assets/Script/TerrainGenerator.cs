@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,6 +16,7 @@ public class TerrainGenerator : MonoBehaviour
     void Start()
     {
         LoadChunks();
+      
     }
  
     void BuildChunk(int xPos, int zPos)
@@ -37,7 +39,6 @@ public class TerrainGenerator : MonoBehaviour
         }
         chunk.BuildMesh();
         chunks.Add(new ChunkPos(xPos, zPos), chunk);
-
 
     }
     BlockType GetBlockType(int x, int y, int z)
@@ -151,5 +152,13 @@ public struct ChunkPos
     {
         this.x = x;
         this.z = z;
+    }
+    public override bool Equals(object obj)
+    {
+        if (obj is ChunkPos other)
+        {
+            return this.x == other.x && this.z == other.z;
+        }
+        return false;
     }
 }
