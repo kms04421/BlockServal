@@ -12,8 +12,6 @@ public class Monster : MonoBehaviour
     public IEnumerator StartPathfindingLoop()
     {
      
-     
-     
         int count = 0;
         Vector2Int movementDir = new Vector2Int(0,0);
         Vector3Int goal;
@@ -28,18 +26,23 @@ public class Monster : MonoBehaviour
             ChunkPos goalChunkPos = new ChunkPos(goalPos.x, goalPos.z);
 
             BlockType[,,] blocks = TerrainGenerator.chunks[startChunkPos].blocks;
-          
+
             if (!startPos.Equals(goalPos))
             {
                 movementDir = new Vector2Int((goalChunkPos.x / 16) - (startChunkPos.x / 16),
                                                     (goalChunkPos.z / 16) - (startChunkPos.z / 16));
-                goal = WorldPositionHelper.GetIntBlockPosition(GetChunkBasedGoalPosition(movementDir, startChunkPos));
+
+                goal = GetChunkBasedGoalPosition(movementDir, startChunkPos);
             }
             else
             {
+    
                 goal = WorldPositionHelper.GetIntBlockPosition(player.position);
             }
+
             List<Vector3Int> movePath = AStarBlockPathfinder.FindPath(WorldPositionHelper.GetIntBlockPosition(transform.position), goal, startChunkPos);
+            if (movePath == null) break;// 경로가 없으면 추적 정지
+
             yield return StartCoroutine(FollowPath(movePath));
 
             if (!startPos.Equals(goalPos))
@@ -47,14 +50,11 @@ public class Monster : MonoBehaviour
                
                 nextChunkPos = new Vector3Int((movementDir.x * 16) + startPos.x,(int)transform.position.y,(movementDir.y * 16) + startPos.z);
         
-                targetPos = NextChunkBlockPos(blocks, goal); // 요건 블럭 포지션 
+                targetPos = NextChunkBlockPos(blocks, goal); // 요건 블럭 포지션  <- 위치 설정 문제
+                Debug.Log(WorldPositionHelper.LocalToWorld(targetPos, nextChunkPos));
                 yield return StartCoroutine(MoveToPosition(WorldPositionHelper.LocalToWorld(targetPos, nextChunkPos)));     
             }
           
-       
-
-         
-         
             count++;
             if (count == 2)
             {
@@ -90,47 +90,62 @@ public class Monster : MonoBehaviour
 
     public Vector3Int GetChunkBasedGoalPosition(Vector2Int movementDir, ChunkPos chunkPos)
     {
+
         int chunkSize = TerrainChunk.chunkWidth;
+
         BlockType[,,] blocks = TerrainGenerator.chunks[chunkPos].blocks;
+ 
         int width = blocks.GetLength(0);
         int height = blocks.GetLength(1);
         int depth = blocks.GetLength(2);
+   
+        Vector3Int targetPos;
         if (movementDir.x > 0 && movementDir.y == 0)// → 오른쪽
         {
-            return new Vector3Int((chunkPos.x + 1) * chunkSize - 1, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize + chunkSize / 2);
+            targetPos =  new Vector3Int((chunkPos.x + 1) * chunkSize - 1, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize + chunkSize / 2);
         }
         else if (movementDir.x < 0 && movementDir.y == 0)// ← 왼쪽
         {
-            return new Vector3Int(chunkPos.x * chunkSize, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize + chunkSize / 2);
+            targetPos = new Vector3Int(chunkPos.x * chunkSize, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize + chunkSize / 2);
         }
         else if (movementDir.x == 0 && movementDir.y > 0)// ↑ 위쪽
         {
-            return new Vector3Int(chunkPos.x * chunkSize + chunkSize / 2, Mathf.FloorToInt(player.position.y), (chunkPos.z + 1) * chunkSize - 1);
+            targetPos = new Vector3Int(chunkPos.x * chunkSize + chunkSize / 2, Mathf.FloorToInt(player.position.y), (chunkPos.z + 1) * chunkSize - 1);
         }
         else if (movementDir.x == 0 && movementDir.y < 0) // ↓ 아래쪽
         {
-            return new Vector3Int(chunkPos.x * chunkSize + chunkSize / 2, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize);
+            targetPos = new Vector3Int(chunkPos.x * chunkSize + chunkSize / 2, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize);
         }
         else if (movementDir.x > 0 && movementDir.y > 0) // ↗ 오른쪽 위 (대각선)
         {
-            return new Vector3Int((chunkPos.x + 1) * chunkSize - 1, Mathf.FloorToInt(player.position.y), (chunkPos.z + 1) * chunkSize - 1);
+            targetPos = new Vector3Int((chunkPos.x + 1) * chunkSize - 1, Mathf.FloorToInt(player.position.y), (chunkPos.z + 1) * chunkSize - 1);
         }
         else if (movementDir.x > 0 && movementDir.y < 0)// ↘ 오른쪽 아래 (대각선)
         {
-            return new Vector3Int((chunkPos.x + 1) * chunkSize - 1, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize);
+            targetPos = new Vector3Int((chunkPos.x + 1) * chunkSize - 1, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize);
         }
         else if (movementDir.x < 0 && movementDir.y > 0)// ↖ 왼쪽 위 (대각선)
         {
-            return new Vector3Int(chunkPos.x * chunkSize, Mathf.FloorToInt(player.position.y), (chunkPos.z + 1) * chunkSize - 1);
+            targetPos = new Vector3Int(chunkPos.x * chunkSize, Mathf.FloorToInt(player.position.y), (chunkPos.z + 1) * chunkSize - 1);
         }
         else if (movementDir.x < 0 && movementDir.y < 0) // ↙ 왼쪽 아래 (대각선)
         {
-            return new Vector3Int(chunkPos.x * chunkSize, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize);
+            targetPos = new Vector3Int(chunkPos.x * chunkSize, Mathf.FloorToInt(player.position.y), chunkPos.z * chunkSize);
         }
         else// (0, 0) → 도착 지점
         {
-            return Vector3Int.zero;
+            targetPos = Vector3Int.zero;
         }
+
+        targetPos = WorldPositionHelper.GetIntBlockPosition(targetPos);
+        while (blocks[targetPos.x,targetPos.y,targetPos.z] != BlockType.Air)
+        {
+           
+            targetPos = new Vector3Int(targetPos.x,targetPos.y+1,targetPos.z);
+        }
+       
+        return targetPos;
+
     }
     IEnumerator FollowPath(List<Vector3Int> path)
     {

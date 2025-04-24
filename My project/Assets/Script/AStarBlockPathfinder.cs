@@ -13,7 +13,8 @@ public static class AStarBlockPathfinder
 
     public static List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal, ChunkPos startChunkPos )
     {
-       
+        Vector3Int d = new Vector3Int(startChunkPos.x, 0, startChunkPos.z);
+
         BlockType[,,] blocks = TerrainGenerator.chunks[startChunkPos].blocks;
         int width = blocks.GetLength(0);
         int height = blocks.GetLength(1);
@@ -42,11 +43,11 @@ public static class AStarBlockPathfinder
             {
                 Vector3Int neighborPos = current.Pos + dir; // 이동할 위치값
                 if (colseSet.Contains(neighborPos)) continue; // 이미 탐색한 경로일때
-
-                if (blocks[neighborPos.x, neighborPos.y, neighborPos.z] == BlockType.Air) continue; // 이동한 위치 블럭이 air일때 
+               
                 if (!IsInBounds(neighborPos, width, height, depth)) continue; // 배열 벗어나는거 방지
 
-
+                if (blocks[neighborPos.x, neighborPos.y+1, neighborPos.z] != BlockType.Air) continue; // 이동한 위치 블럭이 air일때 
+                
                 int tentiveG = current.G + 1; // 임시 이동값
 
                 Node existingNode = opneList.Find(a => a.Pos == neighborPos); // openList에 neighborPos와 같은 값이 있을경우 저장
@@ -63,13 +64,13 @@ public static class AStarBlockPathfinder
 
             }
         }
-        Debug.Log("null");
+        Debug.Log("경로없음");
         return null;
     }
     private static bool IsInBounds(Vector3Int pos, int w, int y, int z) // 이동값이 배열 내부인지 확인
     {
         return pos.x >= 0 && pos.x < w &&
-               pos.y >= 0 && pos.y < y &&
+               pos.y >= 0 && pos.y < y-1 &&
                pos.z >= 0 && pos.z < z;
     }
 
