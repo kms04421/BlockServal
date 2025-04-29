@@ -47,8 +47,8 @@ public static class AStarBlockPathfinder
                
                 if (!IsInBounds(neighborPos, width, height, depth)) continue; // 배열 벗어나는거 방지
 
-                if (blocks[neighborPos.x, neighborPos.y+1, neighborPos.z] != BlockType.Air) continue; // 이동한 위치 위블럭이 air일때 
-                if (blocks[neighborPos.x, neighborPos.y-1, neighborPos.z] == BlockType.Air) continue; // 이동한 위치 아래블럭이 air일때 
+               // if (blocks[neighborPos.x, neighborPos.y+1, neighborPos.z] != BlockType.Air) continue; // 이동한 위치 위블럭이 air일때 
+              //  if (blocks[neighborPos.x, neighborPos.y-1, neighborPos.z] == BlockType.Air) continue; // 이동한 위치 아래블럭이 air일때 
 
                 int tentiveG = current.G + 1; // 임시 이동값
 
@@ -107,6 +107,7 @@ public static class AStarBlockPathfinder
        
         List<ChunkPos> path = new List<ChunkPos>();
         ChunkPos current = startChunk;
+        path.Add(startChunk);
         int chunkWidth = TerrainChunk.chunkWidth;
         while (!current.Equals(goalChunk))
         {
