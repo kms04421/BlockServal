@@ -27,6 +27,7 @@ public static class AStarBlockPathfinder
         Node startNode = new Node(start, null, 0, Heuristic(start, goal));
 
         opneList.Add(startNode);
+     
         while (opneList.Count > 0)
         {
             opneList.Sort((a, b) => a.F.CompareTo(b.F)); //Node.F값이 작은순으로 정렬
@@ -46,8 +47,9 @@ public static class AStarBlockPathfinder
                
                 if (!IsInBounds(neighborPos, width, height, depth)) continue; // 배열 벗어나는거 방지
 
-                if (blocks[neighborPos.x, neighborPos.y+1, neighborPos.z] != BlockType.Air) continue; // 이동한 위치 블럭이 air일때 
-                
+                if (blocks[neighborPos.x, neighborPos.y+1, neighborPos.z] != BlockType.Air) continue; // 이동한 위치 위블럭이 air일때 
+                if (blocks[neighborPos.x, neighborPos.y-1, neighborPos.z] == BlockType.Air) continue; // 이동한 위치 아래블럭이 air일때 
+
                 int tentiveG = current.G + 1; // 임시 이동값
 
                 Node existingNode = opneList.Find(a => a.Pos == neighborPos); // openList에 neighborPos와 같은 값이 있을경우 저장
@@ -64,7 +66,8 @@ public static class AStarBlockPathfinder
 
             }
         }
-        Debug.Log("경로없음");
+  
+
         return null;
     }
     private static bool IsInBounds(Vector3Int pos, int w, int y, int z) // 이동값이 배열 내부인지 확인
@@ -97,5 +100,30 @@ public static class AStarBlockPathfinder
     {
         return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y) + Mathf.Abs(a.z - b.z);
     }
-  
+
+    // 청크 단위 이동 경로 찾기
+    public static List<ChunkPos> FindChunkPath(ChunkPos startChunk, ChunkPos goalChunk)
+    {
+       
+        List<ChunkPos> path = new List<ChunkPos>();
+        ChunkPos current = startChunk;
+        int chunkWidth = TerrainChunk.chunkWidth;
+        while (!current.Equals(goalChunk))
+        {
+            Vector2Int moveDir = new Vector2Int(
+                   (int)Mathf.Sign(goalChunk.x - current.x), // 목표가 오른쪽이면 1, 왼쪽이면 -1
+                   (int)Mathf.Sign(goalChunk.z - current.z)  // 목표가 위면 1, 아래면 -1
+               );
+
+            // 한 번에 이동하는 크기를 chunkWidth으로 설정
+            if (current.x != goalChunk.x)
+                current.x += moveDir.x * chunkWidth;
+
+            if (current.z != goalChunk.z)
+                current.z += moveDir.y * chunkWidth;
+            path.Add(current);
+        }
+
+        return path;
+    }
 }

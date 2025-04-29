@@ -97,18 +97,19 @@ public class TerrainGenerator : MonoBehaviour
     // 월드생성 
     void LoadChunks(bool instant = false) //true면 바로 생성
     {
+        int chunkWidth = TerrainChunk.chunkWidth;
         //현재 플레이어 위치를 기준의 청크값 x,z값 가져옴
-        int curChunkPosX = Mathf.FloorToInt(player.position.x / 16) * 16; // 플레이어 위치 기준 소수를 내림하여 위치값 설정
-        int curChunkPosZ = Mathf.FloorToInt(player.position.z / 16) * 16;
-
+        int curChunkPosX = Mathf.FloorToInt(player.position.x / chunkWidth) * chunkWidth; // 플레이어 위치 기준 소수를 내림하여 위치값 설정
+        int curChunkPosZ = Mathf.FloorToInt(player.position.z / chunkWidth) * chunkWidth;
+      
         //curChunk에 x,z값과 curChunkPosX,curChunkPosZ 값이 일치 하지 않으면 
         if (curChunk.x != curChunkPosX || curChunk.z != curChunkPosZ)
         {
             curChunk.x = curChunkPosX;
             curChunk.z = curChunkPosZ;
             // 플레이어 근처 블럭 생성 
-            for (int i = curChunkPosX - 16 * chunkDist; i <= curChunkPosX + 16 * chunkDist; i += 16)
-                for (int j = curChunkPosZ - 16 * chunkDist; j <= curChunkPosZ + 16 * chunkDist; j += 16)
+            for (int i = curChunkPosX - chunkWidth * chunkDist; i <= curChunkPosX + chunkWidth * chunkDist; i += chunkWidth)
+                for (int j = curChunkPosZ - chunkWidth * chunkDist; j <= curChunkPosZ + chunkWidth * chunkDist; j += chunkWidth)
                 {
                     ChunkPos cp = new ChunkPos(i, j);
                     if (!chunks.ContainsKey(cp) && !toGenerate.Contains(cp))
