@@ -21,7 +21,7 @@ public class TerrainChunk : MonoBehaviour
                     if (blocks[x, y, z] != BlockType.Air)
                     {
                     
-                        Vector3 blockPos = new Vector3(x - 1, y, z - 1);
+                        Vector3 blockPos = new Vector3(x - 0.5f, y, z - 0.5f);
                         //각면이 공기인곳 찾아서 추가 
                         //위
                         if (y < chunkHeight - 1 && blocks[x, y + 1, z] == BlockType.Air)

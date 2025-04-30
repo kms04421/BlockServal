@@ -11,7 +11,7 @@ public static class AStarBlockPathfinder
       };
 
 
-    public static List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal, ChunkPos startChunkPos )
+    public static List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal, ChunkPos startChunkPos)
     {
         Vector3Int d = new Vector3Int(startChunkPos.x, 0, startChunkPos.z);
 
@@ -21,13 +21,13 @@ public static class AStarBlockPathfinder
         int depth = blocks.GetLength(2);
 
         List<Node> opneList = new List<Node>(); //아직 평가되지 않은 리스트
-   
+
         HashSet<Vector3Int> colseSet = new HashSet<Vector3Int>(); //이미 평가된 리스트
-      
+
         Node startNode = new Node(start, null, 0, Heuristic(start, goal));
 
         opneList.Add(startNode);
-     
+
         while (opneList.Count > 0)
         {
             opneList.Sort((a, b) => a.F.CompareTo(b.F)); //Node.F값이 작은순으로 정렬
@@ -44,12 +44,12 @@ public static class AStarBlockPathfinder
             {
                 Vector3Int neighborPos = current.Pos + dir; // 이동할 위치값
                 if (colseSet.Contains(neighborPos)) continue; // 이미 탐색한 경로일때
-               
+
                 if (!IsInBounds(neighborPos, width, height, depth)) continue; // 배열 벗어나는거 방지
 
-               // if (blocks[neighborPos.x, neighborPos.y+1, neighborPos.z] != BlockType.Air) continue; // 이동한 위치 위블럭이 air일때 
-              //  if (blocks[neighborPos.x, neighborPos.y-1, neighborPos.z] == BlockType.Air) continue; // 이동한 위치 아래블럭이 air일때 
-
+                if (blocks[neighborPos.x, neighborPos.y + 1, neighborPos.z] != BlockType.Air) continue; // 이동한 위치 위블럭이 air일때 
+                if (blocks[neighborPos.x, neighborPos.y - 1, neighborPos.z] == BlockType.Air) continue; // 이동한 위치 아래블럭이 air일때 
+                
                 int tentiveG = current.G + 1; // 임시 이동값
 
                 Node existingNode = opneList.Find(a => a.Pos == neighborPos); // openList에 neighborPos와 같은 값이 있을경우 저장
@@ -66,14 +66,14 @@ public static class AStarBlockPathfinder
 
             }
         }
-  
+
 
         return null;
     }
     private static bool IsInBounds(Vector3Int pos, int w, int y, int z) // 이동값이 배열 내부인지 확인
     {
         return pos.x >= 0 && pos.x < w &&
-               pos.y >= 0 && pos.y < y-1 &&
+               pos.y >= 0 && pos.y < y - 1 &&
                pos.z >= 0 && pos.z < z;
     }
 
@@ -104,7 +104,7 @@ public static class AStarBlockPathfinder
     // 청크 단위 이동 경로 찾기
     public static List<ChunkPos> FindChunkPath(ChunkPos startChunk, ChunkPos goalChunk)
     {
-       
+
         List<ChunkPos> path = new List<ChunkPos>();
         ChunkPos current = startChunk;
         path.Add(startChunk);
