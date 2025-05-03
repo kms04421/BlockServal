@@ -1,39 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class TerrainGenerator : MonoBehaviour
+public class TerrainGenerator : Singleton<TerrainGenerator>
 {
-    public Transform player;
+  
     public GameObject terrainChunk;
     FastNoise noise = new FastNoise(); //펄린노이즈를 빠르게 만들어주는 스크립트
     int chunkDist = 1; //플레이어 근방 생성할 청크
     List<ChunkPos> toGenerate = new List<ChunkPos>();
     ChunkPos curChunk = new ChunkPos(-1, -1);
     public static Dictionary<ChunkPos, TerrainChunk> chunks = new Dictionary<ChunkPos, TerrainChunk>();
-    void Start()
-    {
-        LoadChunks();
-      
-    }
- 
+
+
     void BuildChunk(int xPos, int zPos)
     {
         TerrainChunk chunk;
         GameObject chunkGO = Instantiate(terrainChunk, new Vector3(xPos, 0, zPos), Quaternion.identity);
         chunk = chunkGO.GetComponent<TerrainChunk>();
         chunkGO.transform.parent = transform;
-        for (int x = 0; x < TerrainChunk.chunkWidth+2; x++)
+        for (int x = 0; x < TerrainChunk.chunkWidth + 2; x++)
         {
-            for (int z = 0; z < TerrainChunk.chunkWidth+2; z++)
+            for (int z = 0; z < TerrainChunk.chunkWidth + 2; z++)
             {
                 for (int y = 0; y < TerrainChunk.chunkHeight; y++)
-                {            
+                {
                     chunk.blocks[x, y, z] = GetBlockType(xPos + x - 1, y, zPos + z - 1);
                     //Debug.Log(chunk.blocks[x, y, z]);
-                   
+
                 }
             }
         }
@@ -66,12 +60,12 @@ public class TerrainGenerator : MonoBehaviour
         */
 
         //stone layer heightmap
-     /*   float simplexStone1 = noise.GetSimplex(x * 1f, z * 1f) * 10; //x * 1, z * 1 =  저주파 노이즈를 사용하여 기본적인 암석층 형성.
-        float simplexStone2 = (noise.GetSimplex(x * 5f, z * 5f) + .5f) * 20 * (noise.GetSimplex(x * 0.3f, z * 0.3f) + 0.5f);
+        /*   float simplexStone1 = noise.GetSimplex(x * 1f, z * 1f) * 10; //x * 1, z * 1 =  저주파 노이즈를 사용하여 기본적인 암석층 형성.
+           float simplexStone2 = (noise.GetSimplex(x * 5f, z * 5f) + .5f) * 20 * (noise.GetSimplex(x * 0.3f, z * 0.3f) + 0.5f);
 
-        float stoneHeightMap = simplexStone1 + simplexStone2;
-        float baseStoneHeight = TerrainChunk.chunkHeight * .25f + stoneHeightMap;
-*/
+           float stoneHeightMap = simplexStone1 + simplexStone2;
+           float baseStoneHeight = TerrainChunk.chunkHeight * .25f + stoneHeightMap;
+   */
 
 
         BlockType blockType = BlockType.Air;
@@ -88,20 +82,20 @@ public class TerrainGenerator : MonoBehaviour
         }
 
 
-      /*  if (caveNoise1 > Mathf.Max(caveMask, .2f)) // 동굴
-            blockType = BlockType.Air;*/
+        /*  if (caveNoise1 > Mathf.Max(caveMask, .2f)) // 동굴
+              blockType = BlockType.Air;*/
 
         return blockType;
 
     }
     // 월드생성 
-    void LoadChunks(bool instant = false) //true면 바로 생성
+    public void LoadChunks(Transform player, bool instant = false) //true면 바로 생성
     {
         int chunkWidth = TerrainChunk.chunkWidth;
         //현재 플레이어 위치를 기준의 청크값 x,z값 가져옴
         int curChunkPosX = Mathf.FloorToInt(player.position.x / chunkWidth) * chunkWidth; // 플레이어 위치 기준 소수를 내림하여 위치값 설정
         int curChunkPosZ = Mathf.FloorToInt(player.position.z / chunkWidth) * chunkWidth;
-      
+
         //curChunk에 x,z값과 curChunkPosX,curChunkPosZ 값이 일치 하지 않으면 
         if (curChunk.x != curChunkPosX || curChunk.z != curChunkPosZ)
         {
@@ -126,7 +120,7 @@ public class TerrainGenerator : MonoBehaviour
                 }
             StartCoroutine(DelayBuildChunks());
         }
-     
+
     }
     IEnumerator DelayBuildChunks() // 프레임 드랍 방지용 한프레임 내에서 한번에 생성되는거 방지
     {
@@ -149,7 +143,7 @@ public struct ChunkPos
 {
     public int x;
     public int z;
-    public ChunkPos(int x,int z)
+    public ChunkPos(int x, int z)
     {
         this.x = x;
         this.z = z;

@@ -106,10 +106,12 @@ public class TerrainChunk : MonoBehaviour
         mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
         GetComponent<MeshFilter>().mesh = mesh;
-       
         // 텍스처 적용
         GetComponent<MeshRenderer>().material.mainTexture = SpriteAtlasManager.GetBlockSprite(0).texture;
-        
+        MeshCollider meshCollider = GetComponent<MeshCollider>();
+        meshCollider.sharedMesh = null;  //  충돌 갱신 트리거용
+        meshCollider.sharedMesh = mesh;
+
     }
    
 }
