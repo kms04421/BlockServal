@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
  
     public float moveSpeed = 5f;
-    public float gravity = -9.81f;
+    public float gravity = -10f;
     public float jumpHeight = 2f;
 
     public Transform cameraHolder; // 카메라를 들고 있는 빈 오브젝트
@@ -42,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
         // 바닥 체크
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-
+        
         if (isGrounded && velocity.y < 0)
             velocity.y = -2f;
 
