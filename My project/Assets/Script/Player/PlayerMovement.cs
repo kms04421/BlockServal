@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundMask;
 
     CharacterController controller;
+    public GameObject equippedObject;
 
     void Start()
     {
@@ -35,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // 위아래 고개 제한
+        xRotation = Mathf.Clamp(xRotation, -90f, 130f); // 위아래 고개 제한
 
         cameraHolder.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX); // 본체 좌우 회전
@@ -55,9 +56,16 @@ public class PlayerMovement : MonoBehaviour
         // 점프
         if (Input.GetButtonDown("Jump") && isGrounded)
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-
+        // 우클릭 액션
+        if(Input.GetMouseButtonDown(0))
+        {
+            IUsable usable = equippedObject?.GetComponent<IUsable>();
+            usable?.Use();
+        }
         // 중력
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+
+        
     }
 }

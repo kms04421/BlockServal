@@ -4,19 +4,35 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
-    public Transform player;
+    private Transform player;
+    private Vector3 playerTransform;
+    private Coroutine moveCoroutine;
+    private ChunkPos saveChunkPos;
+    List<ChunkPos> chunkPath;
+    public delegate void CotoutineStop();
     void Start()
-    {
-        StartCoroutine(StartPathfindingLoop());
+    {           
+        player = GameManager.Instance.player.transform;
+        playerTransform = new Vector3(0, 0, 0);
     }
-    public IEnumerator StartPathfindingLoop() // 경로찾고 이동실행
+    private void FixedUpdate()
+    {
+        if (Vector3.Distance(player.position , playerTransform) > 1f)
+        {    
+            StopAllCoroutines();           
+            StartCoroutine(StartPathfindingLoop());
+            playerTransform = player.position;
+        }
+        
+    }
+    private IEnumerator StartPathfindingLoop() // 경로찾고 이동실행
     {
 
         Vector3Int startPos = WorldPositionHelper.GetChunkPosition(transform.position);
         Vector3Int goalPos = WorldPositionHelper.GetChunkPosition(player.position);
         ChunkPos startChunkPos = new ChunkPos(startPos.x, startPos.z);
         ChunkPos goalChunkPos = new ChunkPos(goalPos.x, goalPos.z);
-        List<ChunkPos> chunkPath = AStarBlockPathfinder.FindChunkPath(startChunkPos, goalChunkPos); // 청크 루트 검색
+        chunkPath = AStarBlockPathfinder.FindChunkPath(startChunkPos, goalChunkPos); // 청크 루트 검색
         Vector3Int start = new Vector3Int();
         Vector3Int goal = new Vector3Int();
         int count = 0;
@@ -26,7 +42,7 @@ public class Monster : MonoBehaviour
             if (chunkPath.Count > 0)
             {
                 Vector3Int[] targets = CalculateNextChunkTargets(chunkPath[count]);
-                Debug.Log(WorldPositionHelper.LocalToWorld(targets[0], chunkPath[count]) + " : " + WorldPositionHelper.LocalToWorld(targets[1], chunkPath[count]));
+                
                 if (count == 0)
                 {
                     start = WorldPositionHelper.GetIntBlockPosition(transform.position);
@@ -59,7 +75,7 @@ public class Monster : MonoBehaviour
         }
 
     }
-    public Vector3Int[] CalculateNextChunkTargets(ChunkPos chunk) //청크 넘어갈때 몬스터와 가장 가까운지점 : start, 플레이어와 가장 가까운 지점 찾기 : goal
+    private Vector3Int[] CalculateNextChunkTargets(ChunkPos chunk) //청크 넘어갈때 몬스터와 가장 가까운지점 : start, 플레이어와 가장 가까운 지점 찾기 : goal
     {
         Vector3Int[] targetPos = new Vector3Int[2];
 
@@ -117,7 +133,7 @@ public class Monster : MonoBehaviour
         }
         return targetPos;
     }
-    IEnumerator FollowPath(List<Vector3Int> path, ChunkPos chunk) //경로 따라 이동
+    private IEnumerator FollowPath(List<Vector3Int> path, ChunkPos chunk) //경로 따라 이동
     {
         int currentIndex = 0;
         float speed = 5;

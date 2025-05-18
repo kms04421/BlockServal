@@ -42,4 +42,11 @@ public static  class WorldPositionHelper
     {
         return new Vector3Int(Mathf.FloorToInt(vector.x), Mathf.FloorToInt(vector.y), Mathf.FloorToInt(vector.z));
     }
+    public static ChunkPos WorldToChunkPos(Vector3 worldPos)
+    {
+        
+        int x = Mathf.FloorToInt(worldPos.x );
+        int z = Mathf.FloorToInt(worldPos.z );
+        return new ChunkPos(x, z);
+    }
 }
