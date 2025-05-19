@@ -10,6 +10,7 @@ public class TerrainChunk : MonoBehaviour
 
     public void BuildMesh()
     {
+        Mesh mesh = new Mesh();
         List<Vector3> verts = new List<Vector3>();
         List<int> tris = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
@@ -44,19 +45,6 @@ public class TerrainChunk : MonoBehaviour
                             numFaces++;
                             uvs.AddRange(Block.blocks[blocks[x, y, z]].bottmTile.GetUvs());
                         }
-
-
-                        //오른쪽
-                        if (blocks[x + 1, y, z] == BlockType.Air)
-                        {
-                            verts.Add(blockPos + new Vector3(1, 0, 0));
-                            verts.Add(blockPos + new Vector3(1, 1, 0));
-                            verts.Add(blockPos + new Vector3(1, 1, 1));
-                            verts.Add(blockPos + new Vector3(1, 0, 1));
-                            numFaces++;
-                            uvs.AddRange(Block.blocks[blocks[x, y, z]].sideTile.GetUvs());
-                        }
-
                         //앞
                         if (blocks[x, y, z - 1] == BlockType.Air)
                         {
@@ -68,6 +56,17 @@ public class TerrainChunk : MonoBehaviour
                             uvs.AddRange(Block.blocks[blocks[x, y, z]].sideTile.GetUvs());
                         }
 
+                        //오른쪽
+                        if (blocks[x + 1, y, z] == BlockType.Air)
+                        {
+                            verts.Add(blockPos + new Vector3(1, 0, 0));
+                            verts.Add(blockPos + new Vector3(1, 1, 0));
+                            verts.Add(blockPos + new Vector3(1, 1, 1));
+                            verts.Add(blockPos + new Vector3(1, 0, 1));
+                            numFaces++;
+                            uvs.AddRange(Block.blocks[blocks[x, y, z]].sideTile.GetUvs());
+                        }
+                  
                         //뒤
                         if (blocks[x, y, z + 1] == BlockType.Air)
                         {
@@ -100,12 +99,12 @@ public class TerrainChunk : MonoBehaviour
 
                 }
 
-        Mesh mesh = new Mesh();
         mesh.vertices = verts.ToArray();
         mesh.triangles = tris.ToArray();
         mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
         GetComponent<MeshFilter>().mesh = mesh;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
         // 텍스처 적용
         GetComponent<MeshRenderer>().material.mainTexture = SpriteAtlasManager.GetBlockSprite(0).texture;
         MeshCollider meshCollider = GetComponent<MeshCollider>();

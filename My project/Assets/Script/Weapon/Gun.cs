@@ -14,23 +14,20 @@ public class Gun : MonoBehaviour, IUsable
     {
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)); // È­¸é Áß¾Ó
         if (Physics.Raycast(ray, out RaycastHit hit, range))
-        {
-
-            ChunkPos hitChunkPos = WorldPositionHelper.WorldToChunkPos(hit.transform.position);
-            if (!chunkPos.Equals(hitChunkPos))
-            { 
-                chunkPos = hitChunkPos;
-            }
+        {       
+            chunkPos = WorldPositionHelper.WorldToChunkPos(hit.transform.position);           
             Vector3Int hitPosition = WorldPositionHelper.GetIntBlockPosition(hit.point);
-            Debug.Log($"{hit.transform.position.x}, {hit.transform.position.z}");       
-            BlockType blocks = TerrainGenerator.chunks[chunkPos].blocks[hitPosition.x, hitPosition.y, hitPosition.z];
-            if (blocks != BlockType.Air)
-            {           
-                Block.blocks[blocks] = new Block(Tile.Dirt);
-                TerrainGenerator.chunks[chunkPos].BuildMesh();
-            }
+            TerrainChunk terrainChunk = TerrainGenerator.chunks[chunkPos];
+            if (terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z] == BlockType.Air)
+                return;
+            Debug.Log($"{terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z]}");          
+           
+            terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z] = BlockType.Air;
+            TerrainGenerator.chunks[chunkPos].BuildMesh();
+            
 
         }
-        
+
+
     }
 }
