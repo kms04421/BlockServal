@@ -22,14 +22,9 @@ public class Gun : MonoBehaviour, IUsable
             terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z] = BlockType.Air;
             foreach (KeyValuePair<ChunkPos, TerrainChunk> pair in TerrainGenerator.chunks)
             {
-
                 ChunkPos cp= pair.Key;
-                TerrainGenerator.chunks[cp].BuildMesh();
-           
+                TerrainGenerator.chunks[cp].BuildMesh();           
             }
-            
-           
-            
 
         }
 
