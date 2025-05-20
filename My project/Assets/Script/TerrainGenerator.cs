@@ -129,7 +129,7 @@ public class TerrainGenerator : Singleton<TerrainGenerator>
             BuildChunk(toGenerate[0].x, toGenerate[0].z);
             toGenerate.RemoveAt(0);
 
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
 
         }
 

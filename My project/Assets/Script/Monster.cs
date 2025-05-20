@@ -6,23 +6,32 @@ public class Monster : MonoBehaviour
 {
     private Transform player;
     private Vector3 playerTransform;
-    private Coroutine moveCoroutine;
-    private ChunkPos saveChunkPos;
     List<ChunkPos> chunkPath;
+
+    private Coroutine pathfindingCoroutine;
+    private Coroutine followCoroutine;
+    private Vector3 lastPlayerPos;
     public delegate void CotoutineStop();
     void Start()
     {           
         player = GameManager.Instance.player.transform;
         playerTransform = new Vector3(0, 0, 0);
+        StartCoroutine(MonsterUpdate());
     }
-    private void FixedUpdate()
+    private IEnumerator MonsterUpdate()
     {
-        if (Vector3.Distance(player.position , playerTransform) > 1f)
-        {    
-            StopAllCoroutines();           
-            StartCoroutine(StartPathfindingLoop());
-            playerTransform = player.position;
+        while(true)
+        {
+            if (Vector3.Distance(player.position, playerTransform) > 1f)
+            {
+              
+                yield return StartCoroutine(StartPathfindingLoop());
+                playerTransform = player.position;
+            }
+            yield return null;
         }
+       
+  
         
     }
     private IEnumerator StartPathfindingLoop() // 경로찾고 이동실행
@@ -137,12 +146,21 @@ public class Monster : MonoBehaviour
     {
         int currentIndex = 0;
         float speed = 5;
+        float rotationSpeed = 10f;
+
         if (path == null || path.Count == 0) yield break;
 
         while (currentIndex != path.Count)
         {
             Vector3 targetPos = WorldPositionHelper.LocalToWorld(path[currentIndex], chunk);
             float step = speed * Time.deltaTime;
+            // 회전 처리
+            Vector3 direction = (targetPos - transform.position).normalized;
+            if (direction != Vector3.zero) // LookRotation이 zero vector를 싫어함
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            }
 
             // 이동
             transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
