@@ -8,5 +8,6 @@ public class MonsterData : ScriptableObject
     public int maxHP;
     public int damage;
     public float moveSpeed;
+    public float attackRange;
     //public GameObject dropItemPrefab; //추후 추가
 }

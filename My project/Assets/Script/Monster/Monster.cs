@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
-    private Transform player; // ÇöÀç ÇÃ·¹ÀÌ¾î À§Ä¡
-    private Vector3 lastPlayerPos; // ¸¶Áö¸· ÇÃ·¹ÀÌ¾î ¿ìÄ¡ 
-    List<ChunkPos> chunkPath; // Ã»Å© °æ·ÎÀúÀå¿ë
-    public MonsterData data; // ¸ó½ºÅÍ Á¤º¸
+    public Transform player; // í”Œë ˆì´ì–´ì¢Œí‘œ
+    private Vector3 lastPlayerPos; // ë§ˆì§€ë§‰ í”Œë ˆì´ì–´ì¢Œí‘œ
+    List<ChunkPos> chunkPath; // ì²­í¬ ê²½ë¡œ ì €ì¥ìš©
+    public MonsterData data; // ëª¬ìŠ¤í„° ë°ì´í„°
     private int currentHP;
 
     private MonsterState currentState;
@@ -18,7 +18,7 @@ public class Monster : MonoBehaviour
         lastPlayerPos = new Vector3(0, 0, 0);
         StartCoroutine(MonsterUpdate());
     }
-    private IEnumerator MonsterUpdate()
+    public IEnumerator MonsterUpdate()
     {
         while(true)
         {
@@ -39,6 +39,7 @@ public class Monster : MonoBehaviour
         else
         {
             currentHP = 0;
+            ChangeState(new DieState(this));
         }
       
     }
@@ -48,33 +49,26 @@ public class Monster : MonoBehaviour
         currentState = newState;
         currentState?.Enter();
     }
-    // °æ·Î ÀÌµ¿ ÃßÈÄ ´Ù¸¥Å¬·¡½º·Î ºĞ¸® 
-    private IEnumerator StartPathfindingLoop() // °æ·ÎÃ£°í ÀÌµ¿½ÇÇà
+    // ê²½ë¡œì°¾ê¸° ì‹œì‘
+    private IEnumerator StartPathfindingLoop() 
     {
 
         Vector3Int startPos = WorldPositionHelper.GetChunkPosition(transform.position);
         Vector3Int goalPos = WorldPositionHelper.GetChunkPosition(player.position);
         ChunkPos startChunkPos = new ChunkPos(startPos.x, startPos.z);
         ChunkPos goalChunkPos = new ChunkPos(goalPos.x, goalPos.z);
-        chunkPath = AStarBlockPathfinder.FindChunkPath(startChunkPos, goalChunkPos); // Ã»Å© ·çÆ® °Ë»ö
+        chunkPath = AStarBlockPathfinder.FindChunkPath(startChunkPos, goalChunkPos); // ì²­í¬ ê²½ë¡œì°¾ê¸°
         Vector3Int start = new Vector3Int();
         Vector3Int goal = new Vector3Int();
         int count = 0;
-        //ÇÃ·¹ÀÌ¾î ÃßÀû 
+        //í”Œë ˆì´ì–´ì™€ ê°€ê¹Œì›Œì§ˆë•Œê¹Œì§€ ì´ë™
         while (Vector3.Distance(transform.position, player.position) > 1f)
         {
             if (chunkPath.Count > 0)
             {
                 Vector3Int[] targets = CalculateNextChunkTargets(chunkPath[count]);
+                start = targets[0];  // í˜„ì¬ ì²­í¬ì—ì„œ ê°€ì¥ ê°€ê¹Œìš´ ìœ„ì¹˜ë¡œ ì‹œì‘ì  ì„¤ì •
                 
-                if (count == 0)
-                {
-                    start = WorldPositionHelper.GetIntBlockPosition(transform.position);
-                }
-                else
-                {
-                    start = targets[0];
-                }
                 if (chunkPath.Count - 1 == count)
                 {
                     goal = WorldPositionHelper.GetIntBlockPosition(player.position);
@@ -90,16 +84,16 @@ public class Monster : MonoBehaviour
                 goal = WorldPositionHelper.GetIntBlockPosition(player.position);
             }
 
-            List<Vector3Int> movePath = AStarBlockPathfinder.FindPath(start, goal, chunkPath[count]);
+            List<Vector3Int> movePath = AStarBlockPathfinder.FindPath(start, goal, chunkPath[count]); // ê²½ë¡œì°¾ê¸°
 
-            if (movePath == null) break;// °æ·Î°¡ ¾øÀ¸¸é ÃßÀû Á¤Áö
+            if (movePath == null) break;// ê²½ë¡œê°€ ì—†ìœ¼ë©´ ì¢…ë£Œ
             yield return StartCoroutine(FollowPath(movePath, chunkPath[count]));
             count++;
             if (count >= chunkPath.Count) break;
         }
 
     }
-    private Vector3Int[] CalculateNextChunkTargets(ChunkPos chunk) //Ã»Å© ³Ñ¾î°¥¶§ ¸ó½ºÅÍ¿Í °¡Àå °¡±î¿îÁöÁ¡ : start, ÇÃ·¹ÀÌ¾î¿Í °¡Àå °¡±î¿î ÁöÁ¡ Ã£±â : goal
+    private Vector3Int[] CalculateNextChunkTargets(ChunkPos chunk) // ë‹¤ìŒ ì²­í¬ ë„ì°©ìœ„ì¹˜ ì„¤ì •
     {
         Vector3Int[] targetPos = new Vector3Int[2];
 
@@ -136,12 +130,12 @@ public class Monster : MonoBehaviour
 
         return targetPos;
     }
-    private Vector3Int FindGroundPosition(ChunkPos chunk, Vector3Int targetPos) // Áö¸é Ã£±â
+    private Vector3Int FindGroundPosition(ChunkPos chunk, Vector3Int targetPos) // ë•… ì°¾ê¸°
     {
         BlockType blocks = TerrainGenerator.chunks[chunk].blocks[targetPos.x, targetPos.y, targetPos.z];
         if (blocks == BlockType.Air)
         {
-            // targetPosÀÇ ¾Æ·¡°¡ °ø±âÀÏ°æ¿ì °ø±â°¡ ¾Æ´Ò¶§±îÁö ÇÏ´ÜÀ¸·Î ÀÌµ¿
+            // targetPosì˜ ìœ„ì¹˜ê°€ ë¹„ì–´ìˆìœ¼ë©´ ë•…ì„ ì°¾ì„ë•Œê¹Œì§€ ì•„ë˜ë¡œ ì´ë™
             while (TerrainGenerator.chunks[chunk].blocks[targetPos.x, targetPos.y - 1, targetPos.z] == BlockType.Air) 
             {
                 targetPos = new Vector3Int(targetPos.x, targetPos.y - 2, targetPos.z);
@@ -149,7 +143,7 @@ public class Monster : MonoBehaviour
         }
         else
         {
-            // targetPosÀÇ À§°¡ °ø±â¾Æ´Ò°æ¿ì °ø±â°¡ µÉ¶§±îÁö »ó´ÜÀ¸·Î ÀÌµ¿
+            // targetPosì˜ ìœ„ì¹˜ê°€ ë¹„ì–´ìˆìœ¼ë©´ ë•…ì„ ì°¾ì„ë•Œê¹Œì§€ ìœ„ë¡œ ì´ë™
             while (TerrainGenerator.chunks[chunk].blocks[targetPos.x, targetPos.y + 1, targetPos.z] != BlockType.Air)
             {
                 targetPos = new Vector3Int(targetPos.x, targetPos.y + 2, targetPos.z);
@@ -157,7 +151,7 @@ public class Monster : MonoBehaviour
         }
         return targetPos;
     }
-    private IEnumerator FollowPath(List<Vector3Int> path, ChunkPos chunk) //°æ·Î µû¶ó ÀÌµ¿
+    private IEnumerator FollowPath(List<Vector3Int> path, ChunkPos chunk) // ê²½ë¡œ ë”°ë¼ ì´ë™
     {
         int currentIndex = 0;
         float speed = data.moveSpeed;
@@ -169,25 +163,25 @@ public class Monster : MonoBehaviour
         {
             Vector3 targetPos = WorldPositionHelper.LocalToWorld(path[currentIndex], chunk);
             float step = speed * Time.deltaTime;
-            // È¸Àü Ã³¸®
+            // ë°©í–¥ ì„¤ì •
             Vector3 direction = (targetPos - transform.position).normalized;
-            if (direction != Vector3.zero) // LookRotationÀÌ zero vector¸¦ ½È¾îÇÔ
+            if (direction != Vector3.zero) // LookRotationì˜ zero vectorì¸ ê²½ìš° ì¢…ë£Œ
             {
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             }
 
-            // ÀÌµ¿
+            // ì´ë™
             transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
 
-            // ´ÙÀ½ ÁöÁ¡À¸·Î ³Ñ¾î°¡±â
+            // ì´ë™ê±°ë¦¬ê°€ 0.05f ì´í•˜ì´ê³  í”Œë ˆì´ì–´ì™€ì˜ ê±°ë¦¬ê°€ 1f ì´ìƒì´ë©´ ë‹¤ìŒ ê²½ë¡œë¡œ ì´ë™
             if (Vector3.Distance(transform.position, targetPos) < 0.05f && Vector3.Distance(transform.position, player.position) > 1f)
             {
                 currentIndex++;
                 if (currentIndex >= path.Count)
                 {
-                    path.Clear(); // °æ·Î Á¾·á
-                    Debug.Log("µµÂø!");
+                    path.Clear(); // ê²½ë¡œ ì´ˆê¸°í™”
+                    Debug.Log("ë„ì°©");
                     break;
                 }
             }

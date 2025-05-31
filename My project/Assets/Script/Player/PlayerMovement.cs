@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = -10f;
     public float jumpHeight = 2f;
 
-    public Transform cameraHolder; // Ä«¸Ş¶ó¸¦ µé°í ÀÖ´Â ºó ¿ÀºêÁ§Æ®
+    public Transform cameraHolder; // Ä«ï¿½Ş¶ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
     public float mouseSensitivity = 100f;
 
     float xRotation = 0f;
@@ -26,43 +26,43 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked; // ¸¶¿ì½º ¼û±â°í È­¸é Áß¾Ó °íÁ¤
+        Cursor.lockState = CursorLockMode.Locked; // ë§ˆìš°ìŠ¤ ì»¤ì„œ ê³ ì •
     }
 
     void Update()
     {
-        // ¸¶¿ì½º È¸Àü Ã³¸®
+        // ë§ˆìš°ìŠ¤ ì»¤ì„œ ì´ë™
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 130f); // À§¾Æ·¡ °í°³ Á¦ÇÑ
+        xRotation = Mathf.Clamp(xRotation, -90f, 160f); // ì¹´ë©”ë¼ íšŒì „ ì œí•œ
 
         cameraHolder.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.Rotate(Vector3.up * mouseX); // º»Ã¼ ÁÂ¿ì È¸Àü
+        transform.Rotate(Vector3.up * mouseX); // í”Œë ˆì´ì–´ íšŒì „
 
-        // ¹Ù´Ú Ã¼Å©
+        // ë•… ì²´í¬
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
         
         if (isGrounded && velocity.y < 0)
             velocity.y = -2f;
 
-        // ÀÌµ¿
+        // ì´ë™
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * moveSpeed * Time.deltaTime);
 
-        // Á¡ÇÁ
+        // ì í”„
         if (Input.GetButtonDown("Jump") && isGrounded)
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        // ¿ìÅ¬¸¯ ¾×¼Ç
+        // ë§ˆìš°ìŠ¤ ì™¼ìª½ ë²„íŠ¼ í´ë¦­
         if(Input.GetMouseButtonDown(0))
         {
             IUsable usable = equippedObject?.GetComponent<IUsable>();
             usable?.Use();
         }
-        // Áß·Â
+        // ì¤‘ë ¥ ì ìš©
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
