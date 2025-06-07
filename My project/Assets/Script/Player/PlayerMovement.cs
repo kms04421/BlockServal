@@ -9,19 +9,19 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = -10f;
     public float jumpHeight = 2f;
 
-    public Transform cameraHolder; // ī�޶� ��� �ִ� �� ������Ʈ
+    public Transform cameraHolder; // 카메라
     public float mouseSensitivity = 100f;
 
     float xRotation = 0f;
-    Vector3 velocity;
-    bool isGrounded;
+    Vector3 velocity; // 속도
+    bool isGrounded; // 땅 위에 있는지 여부
 
-    public Transform groundCheck;
-    public float groundDistance = 0.4f;
-    public LayerMask groundMask;
+    public Transform groundCheck; // 땅 체크 위치
+    public float groundDistance = 0.4f; // 땅 체크 거리
+    public LayerMask groundMask; // 땅 레이어
 
-    CharacterController controller;
-    public GameObject equippedObject;
+    CharacterController controller; // 캐릭터 컨트롤러
+    public GameObject equippedObject; // 장착된 무기
 
     void Start()
     {
@@ -60,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             IUsable usable = equippedObject?.GetComponent<IUsable>();
-            usable?.Use();
+            usable?.Attack();
         }
         // 중력 적용
         velocity.y += gravity * Time.deltaTime;

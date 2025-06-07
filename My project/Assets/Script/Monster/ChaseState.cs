@@ -14,7 +14,7 @@ public class ChaseState : MonsterState
     public override void Enter()
     {
         Debug.Log("Chase ");
-       chaseCoroutine = monster.StartCoroutine(ChaseUpdate());
+        chaseCoroutine = monster.StartCoroutine(ChaseUpdate());
     }
 
     public override void Update()

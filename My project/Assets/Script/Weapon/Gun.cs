@@ -2,32 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gun : MonoBehaviour, IUsable
+public class Gun : WeaponBase
 {
-    public Camera cam; // �÷��̾� ī�޶�
-    public float range = 100f;
-    public float damage = 10f;
-    public ParticleSystem muzzleFlash;
-  
-    public void Use()
+    public float range = 100f; //사거리
+    public float damage = 10f; //데미지
+    public ParticleSystem muzzleFlash; //총구 불꽃
+
+    private void Start()
     {
-        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)); // ȭ�� �߾�
-        if (Physics.Raycast(ray, out RaycastHit hit, range))
-        {       
-                   
-            Vector3Int hitPosition = WorldPositionHelper.GetIntBlockPosition(hit.point);
-            TerrainChunk terrainChunk = TerrainGenerator.chunks[WorldPositionHelper.WorldToChunkPos(hit.transform.position)];
-            if (terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z] == BlockType.Air) return;
-            Debug.Log($"{terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z]}");
-            terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z] = BlockType.Air;
-            foreach (KeyValuePair<ChunkPos, TerrainChunk> pair in TerrainGenerator.chunks)
-            {
-                ChunkPos cp= pair.Key;
-                TerrainGenerator.chunks[cp].BuildMesh();           
-            }
+   
+        base.Start();  // 부모 클래스의 Start() 실행 (카메라, 총구 위치 등 기본 초기화)
+        
+    }
 
+    public override void Attack()
+    {
+        Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        if (Physics.Raycast(ray, out RaycastHit hit, weaponData.range))
+        {
+            HandleHit(hit);
         }
-
-
+    }
+     private void HandleHit(RaycastHit hit)
+    {
+        Vector3Int hitPosition = WorldPositionHelper.GetIntBlockPosition(hit.point);
+        TerrainChunk terrainChunk = TerrainGenerator.chunks[WorldPositionHelper.WorldToChunkPos(hit.transform.position)];
+        
+        if (terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z] == BlockType.Air) 
+            return;
+        terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z] = BlockType.Air;
+        terrainChunk.BuildMesh(); //  UpdateChunks();
     }
 }
