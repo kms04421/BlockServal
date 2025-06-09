@@ -9,7 +9,7 @@ public class DieState : MonsterState
 
     public override void Enter()
     {
-        Debug.Log("Die 상태 진입");
-        GameObject.Destroy(monster.gameObject); // 간단 처리
+        Debug.Log("Die");
+        GameObject.Destroy(monster.gameObject); 
     }
 }

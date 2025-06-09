@@ -8,7 +8,7 @@ public class Monster : MonoBehaviour
     private Vector3 lastPlayerPos; // 마지막 플레이어좌표
     List<ChunkPos> chunkPath; // 청크 경로 저장용
     public MonsterData data; // 몬스터 데이터
-    private int currentHP;
+    private float currentHP;
 
     private MonsterState currentState;
      void Start()
@@ -29,7 +29,7 @@ public class Monster : MonoBehaviour
         currentState = newState;
         currentState?.Enter();
     }
-    public void Hit(int dam)
+    public void Hit(float dam)
     {
         if(currentHP - dam < 0)
         {

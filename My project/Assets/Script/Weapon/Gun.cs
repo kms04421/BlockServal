@@ -5,25 +5,31 @@ using UnityEngine;
 public class Gun : WeaponBase
 {
     public float range = 100f; //사거리
-    public float damage = 10f; //데미지
+    public float damage = 10f; //데미지   
     public ParticleSystem muzzleFlash; //총구 불꽃
-
-    private void Start()
-    {
-   
-        base.Start();  // 부모 클래스의 Start() 실행 (카메라, 총구 위치 등 기본 초기화)
-        
-    }
 
     public override void Attack()
     {
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         if (Physics.Raycast(ray, out RaycastHit hit, weaponData.range))
         {
-            HandleHit(hit);
+            switch (hit.collider.gameObject.layer)
+            {
+                case LayerName.Monster:
+                    HandleMonsterHit(hit);
+                    break;
+                    
+                case LayerName.Ground:
+                    HandleGroundHit(hit);
+                    break;
+                    
+                default:
+                    Debug.Log($"Hit unhandled layer: {LayerMask.LayerToName(hit.collider.gameObject.layer)}");
+                    break;
+            }
         }
     }
-     private void HandleHit(RaycastHit hit)
+     private void HandleGroundHit(RaycastHit hit)
     {
         Vector3Int hitPosition = WorldPositionHelper.GetIntBlockPosition(hit.point);
         TerrainChunk terrainChunk = TerrainGenerator.chunks[WorldPositionHelper.WorldToChunkPos(hit.transform.position)];
@@ -33,4 +39,15 @@ public class Gun : WeaponBase
         terrainChunk.blocks[hitPosition.x, hitPosition.y, hitPosition.z] = BlockType.Air;
         terrainChunk.BuildMesh(); //  UpdateChunks();
     }
+    private void HandleMonsterHit(RaycastHit hit)
+    {
+        // 몬스터 피격 처리
+        Monster monster = hit.transform.root.GetComponent<Monster>();
+        Debug.Log("Hit "+monster.name);
+        if (monster != null)
+        {
+            monster.Hit(GetDamage());
+        }
+    }
+
 }

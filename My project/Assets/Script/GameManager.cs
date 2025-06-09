@@ -13,7 +13,7 @@ public class GameManager : Singleton<GameManager>
     {
 
         terrainGenerator.LoadChunks(player.transform);
-        yield return new WaitUntil(() => TerrainGenerator.chunks.Count >= 6);
+        yield return new WaitUntil(() => TerrainGenerator.chunks.Count >= TerrainChunk.chunkWidth*TerrainGenerator.chunkDist);
         player.SetActive(true);
     }
 }

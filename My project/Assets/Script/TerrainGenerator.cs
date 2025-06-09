@@ -6,8 +6,8 @@ public class TerrainGenerator : Singleton<TerrainGenerator>
 {
   
     public GameObject terrainChunk;
-    FastNoise noise = new FastNoise(); //ÆŞ¸°³ëÀÌÁî¸¦ ºü¸£°Ô ¸¸µé¾îÁÖ´Â ½ºÅ©¸³Æ®
-    int chunkDist = 1; //ÇÃ·¹ÀÌ¾î ±Ù¹æ »ı¼ºÇÒ Ã»Å©
+    FastNoise noise = new FastNoise(); //FastNoise 
+    public static int chunkDist = 5; //Chunk ìƒì„±ê±°ë¦¬
     List<ChunkPos> toGenerate = new List<ChunkPos>();
     ChunkPos curChunk = new ChunkPos(-1, -1);
     public static Dictionary<ChunkPos, TerrainChunk> chunks = new Dictionary<ChunkPos, TerrainChunk>();
@@ -40,27 +40,28 @@ public class TerrainGenerator : Singleton<TerrainGenerator>
 
         //Debug.Log(noise.GetSimplex(x, z));
 
-        //Simplex ³ëÀÌÁî¸¦ »ç¿ëÇÏ¿© ºÎµå·¯¿î ³ôÀÌ º¯È­¸¦ »ı¼º
-        //³ëÀÌÁîÀÇ ½ºÄÉÀÏÀ» Á¶Á¤ÇØ¼­ ³ĞÀº ¾ğ´ö°ú °è°îÀ» Çü¼º
+        // Simplex ë…¸ì´ì¦ˆë¥¼ ì‚¬ìš©í•˜ì—¬ ë¶€ë“œëŸ¬ìš´ ì§€í˜• ë³€í™”ë¥¼ ìƒì„±
+        // ì „ì²´ì ì¸ ì§€í˜•ì˜ ê¸°ë³µì„ ë§Œë“œëŠ” ê¸°ë³¸ ë…¸ì´ì¦ˆ
         float simplex1 = noise.GetSimplex(x * 0.8f, z * 0.8f) * 10;
 
-        //(x * 3f, z * 3f) Á» ´õ ³ôÀº ÁÖÆÄ¼ö¸¦ »ç¿ëÇØ¼­ ÀÛÀº ¼¼ºÎÀûÀÎ ÁöÇü º¯È­¸¦ Ãß°¡
-        //(noise.GetSimplex(x * .3f, z * .3f) + .5f)³·Àº ÁÖÆÄ¼öÀÇ ³ëÀÌÁî¸¦ »ç¿ëÇØ ³ôÀÌ º¯È­ÀÇ °­µµ¸¦ Á¶Á¤
+        
+     // (x * 3f, z * 3f)ë¡œ ë” ì‘ì€ ìŠ¤ì¼€ì¼ì˜ ë…¸ì´ì¦ˆë¥¼ ì¶”ê°€í•´ì„œ ì„¸ë¶€ ë””í…Œì¼í•œ ì§€í˜• ë³€í™”ë¥¼ ì¶”ê°€
+     // (noise.GetSimplex(x * .3f, z * .3f) + .5f)ìœ¼ë¡œ ìŠ¤ì¼€ì¼ì˜ ê°•ë„ë¥¼ ì¡°ì ˆí•´ ì§€í˜• ë³€í™”ì˜ ê°•ë„ë¥¼ ì¡°ì ˆ
         float simplex2 = noise.GetSimplex(x * 3f, z * 3f) * 10 * (noise.GetSimplex(x * 0.3f, z * 0.3f) + 0.5f);
 
-        //Å« ÁöÇü º¯È­(simplex1) + ¼¼ºÎÀûÀÎ µğÅ×ÀÏ(simplex2) = ÃÖÁ¾ ³ôÀÌ¸ÊÀ» ±â¹İÀ¸·Î ÁöÇüÀÇ ³ôÀÌ¸¦ °áÁ¤
+        // ê¸°ë³¸ ë…¸ì´ì¦ˆ(simplex1) + ì„¸ë¶€ ë””í…Œì¼ ë…¸ì´ì¦ˆ(simplex2) = ìµœì¢… ë†’ì´ ë§µ
         float heightMap = simplex1 + simplex2;
 
-        //TerrainChunk.chunkHeight * 0.5f = ÁöÇüÀÇ ±âº» ³ôÀÌ¸¦ chunkHeightÀÇ Áß°£°ªÀ¸·Î ¼³Á¤ÇÑ°ª¿¡ heightMap °ªÀ» ´õÇØ¼­ ÃÖÁ¾ ³ôÀÌ¸¦ °áÁ¤.
+        //TerrainChunk.chunkHeight * 0.5f = ê¸°ë³¸ ë†’ì´ chunkHeightì— ì¶”ê°€
         float baseLandHeight = TerrainChunk.chunkHeight * 0.5f + heightMap;
 
         /*   //3d noise for caves and overhangs and such
-           float caveNoise1 = noise.GetPerlinFractal(x * 5f, y * 10f, z * 5f); // PerlinFractalÀ» »ç¿ëÇÏ¿© µ¿±¼ »ı¼º
-           float caveMask = noise.GetSimplex(x * 0.3f, z * 0.3f) + 0.3f;  // Simplex ³ëÀÌÁî¸¦ »ç¿ëÇØ Æ¯Á¤³ôÀÌ¿¡¼­¸¸ µ¿±¼ÀÌ »ı¼ºµÇµµ·Ï ¼³Á¤ ÇÏ´Ü¿¡ Á¶°ÇÁ¸Àç
+           float caveNoise1 = noise.GetPerlinFractal(x * 5f, y * 10f, z * 5f); // PerlinFractal
+           float caveMask = noise.GetSimplex(x * 0.3f, z * 0.3f) + 0.3f;  // Simplex 
         */
 
         //stone layer heightmap
-        /*   float simplexStone1 = noise.GetSimplex(x * 1f, z * 1f) * 10; //x * 1, z * 1 =  ÀúÁÖÆÄ ³ëÀÌÁî¸¦ »ç¿ëÇÏ¿© ±âº»ÀûÀÎ ¾Ï¼®Ãş Çü¼º.
+        /*   float simplexStone1 = noise.GetSimplex(x * 1f, z * 1f) * 10; //x * 1, z * 1 =  
            float simplexStone2 = (noise.GetSimplex(x * 5f, z * 5f) + .5f) * 20 * (noise.GetSimplex(x * 0.3f, z * 0.3f) + 0.5f);
 
            float stoneHeightMap = simplexStone1 + simplexStone2;
@@ -82,26 +83,25 @@ public class TerrainGenerator : Singleton<TerrainGenerator>
         }
 
 
-        /*  if (caveNoise1 > Mathf.Max(caveMask, .2f)) // µ¿±¼
+        /*  if (caveNoise1 > Mathf.Max(caveMask, .2f)) // 
               blockType = BlockType.Air;*/
 
         return blockType;
 
     }
-    // ¿ùµå»ı¼º 
-    public void LoadChunks(Transform player, bool instant = false) //true¸é ¹Ù·Î »ı¼º
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+    public void LoadChunks(Transform player, bool instant = false) //true   
     {
         int chunkWidth = TerrainChunk.chunkWidth;
-        //ÇöÀç ÇÃ·¹ÀÌ¾î À§Ä¡¸¦ ±âÁØÀÇ Ã»Å©°ª x,z°ª °¡Á®¿È
-        int curChunkPosX = Mathf.FloorToInt(player.position.x / chunkWidth) * chunkWidth; // ÇÃ·¹ÀÌ¾î À§Ä¡ ±âÁØ ¼Ò¼ö¸¦ ³»¸²ÇÏ¿© À§Ä¡°ª ¼³Á¤
+        //  
+        int curChunkPosX = Mathf.FloorToInt(player.position.x / chunkWidth) * chunkWidth; 
         int curChunkPosZ = Mathf.FloorToInt(player.position.z / chunkWidth) * chunkWidth;
 
-        //curChunk¿¡ x,z°ª°ú curChunkPosX,curChunkPosZ °ªÀÌ ÀÏÄ¡ ÇÏÁö ¾ÊÀ¸¸é 
+        //curChunk x,z curChunkPosX,curChunkPosZ 
         if (curChunk.x != curChunkPosX || curChunk.z != curChunkPosZ)
         {
             curChunk.x = curChunkPosX;
             curChunk.z = curChunkPosZ;
-            // ÇÃ·¹ÀÌ¾î ±ÙÃ³ ºí·° »ı¼º 
             for (int i = curChunkPosX - chunkWidth * chunkDist; i <= curChunkPosX + chunkWidth * chunkDist; i += chunkWidth)
                 for (int j = curChunkPosZ - chunkWidth * chunkDist; j <= curChunkPosZ + chunkWidth * chunkDist; j += chunkWidth)
                 {
@@ -122,7 +122,7 @@ public class TerrainGenerator : Singleton<TerrainGenerator>
         }
 
     }
-    IEnumerator DelayBuildChunks() // ÇÁ·¹ÀÓ µå¶ø ¹æÁö¿ë ÇÑÇÁ·¹ÀÓ ³»¿¡¼­ ÇÑ¹ø¿¡ »ı¼ºµÇ´Â°Å ¹æÁö
+    IEnumerator DelayBuildChunks() // 
     {
         while (toGenerate.Count > 0)
         {
