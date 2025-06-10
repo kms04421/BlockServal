@@ -35,22 +35,46 @@ SpriteAtlas:
     - {fileID: 1348240790, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
     - {fileID: -1172630062, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
     - {fileID: -1554531887, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+    - {fileID: 125403364, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+    - {fileID: 2127296057, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+    - {fileID: 1209285388, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+    - {fileID: -1647355772, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+    - {fileID: 984230780, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+    - {fileID: 1135645957, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
     - e5af18b87de3b8044b9b8ca3e99348ba: -1554531887
+    - e5af18b87de3b8044b9b8ca3e99348ba: 125403364
     - e5af18b87de3b8044b9b8ca3e99348ba: 1348240790
     - e5af18b87de3b8044b9b8ca3e99348ba: -1172630062
+    - e5af18b87de3b8044b9b8ca3e99348ba: -1647355772
+    - e5af18b87de3b8044b9b8ca3e99348ba: 984230780
+    - e5af18b87de3b8044b9b8ca3e99348ba: 2127296057
+    - e5af18b87de3b8044b9b8ca3e99348ba: 1209285388
+    - e5af18b87de3b8044b9b8ca3e99348ba: 1135645957
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: -1554531887, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+  - {fileID: 125403364, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
   - {fileID: 1348240790, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
   - {fileID: -1172630062, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+  - {fileID: -1647355772, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+  - {fileID: 984230780, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+  - {fileID: 2127296057, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+  - {fileID: 1209285388, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
+  - {fileID: 1135645957, guid: e5af18b87de3b8044b9b8ca3e99348ba, type: 3}
   m_PackedSpriteNamesToIndex:
   - block2
+  - block3
   - block0
   - block1
+  - block6
+  - block7
+  - block4
+  - block5
+  - block8
   m_RenderDataMap: {}
   m_Tag: Block
   m_IsVariant: 0

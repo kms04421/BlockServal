@@ -8,7 +8,7 @@ public class AttackState : MonsterState
 
     public override void Enter()
     {
-        Debug.Log("AttackState 상태 진입");
+        Debug.Log("AttackState");
     }
 
     public override void Update()

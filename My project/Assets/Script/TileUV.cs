@@ -12,31 +12,35 @@ public class TileUV
     {
         uvs = GetTextureRect((int)tile);
     }
-    public Vector2[] GetTextureRect(int i) // ½ºÇÁ¶óÀÌÆ® ¾ÆÆ²¶ó½º¿¡¼­ °¡Á®¿Â ÅØ½ºÃÄ uv¼³Á¤
+    public Vector2[] GetTextureRect(int i) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Æ²ï¿½ó½º¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½ï¿½ï¿½ uvï¿½ï¿½ï¿½ï¿½
     {
         Sprite blockSprite = SpriteAtlasManager.GetBlockSprite(i);
-        Rect textureRect = blockSprite.textureRect; // »ó´Ü ½ºÇÁ¶óÀÌÆ®
+        Rect textureRect = blockSprite.textureRect; // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
         Texture tex = blockSprite.texture;
-        // ÅØ½ºÃ³ÀÇ UV ÁÂÇ¥ °è»ê
+        // ï¿½Ø½ï¿½Ã³ï¿½ï¿½ UV ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½
         float uvXMin = textureRect.x / tex.width;
         float uvXMax = (textureRect.x + textureRect.width) / tex.width;
         float uvYMin = textureRect.y / tex.height;
         float uvYMax = (textureRect.y + textureRect.height) / tex.height;
 
-        // UV ÁÂÇ¥ ¹ÝÈ¯
+        // UV ï¿½ï¿½Ç¥ ï¿½ï¿½È¯
         return new Vector2[]
         {
-            new Vector2(uvXMax, uvYMin), // ÁÂ»ó
-            new Vector2(uvXMax, uvYMax), // ¿ì»ó
-            new Vector2(uvXMin, uvYMax), // ¿ìÇÏ
-            new Vector2(uvXMin, uvYMin)  // ÁÂÇÏ
+            new Vector2(uvXMax, uvYMin), // ï¿½Â»ï¿½
+            new Vector2(uvXMax, uvYMax), // ï¿½ï¿½ï¿½
+            new Vector2(uvXMin, uvYMax), // ï¿½ï¿½ï¿½ï¿½
+            new Vector2(uvXMin, uvYMin)  // ï¿½ï¿½ï¿½ï¿½
         };
     }
     public static Dictionary<Tile, TileUV> tiles = new Dictionary<Tile, TileUV>()
     {
         {Tile.Grass,new TileUV(Tile.Grass)},
         {Tile.Dirt,new TileUV(Tile.Dirt)},
-        {Tile.GrassSide,new TileUV(Tile.GrassSide)}
+        {Tile.GrassSide,new TileUV(Tile.GrassSide)},
+        {Tile.Trunk,new TileUV(Tile.Trunk)},
+        {Tile.TrunkSide,new TileUV(Tile.TrunkSide)},
+        {Tile.Leaves,new TileUV(Tile.Leaves)},
+        {Tile.Stone,new TileUV(Tile.Stone)}
     };
 }
-public enum Tile {GrassSide, Grass, Dirt}
+public enum Tile {GrassSide, Grass, Dirt,Trunk,TrunkSide,Leaves,Stone}

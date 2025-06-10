@@ -5,8 +5,6 @@ using UnityEngine;
 public class Monster : MonoBehaviour
 {
     public Transform player; // 플레이어좌표
-    private Vector3 lastPlayerPos; // 마지막 플레이어좌표
-    List<ChunkPos> chunkPath; // 청크 경로 저장용
     public MonsterData data; // 몬스터 데이터
     private float currentHP;
 

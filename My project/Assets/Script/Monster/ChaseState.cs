@@ -2,29 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 몬스터의 추적 상태를 관리하는 클래스
 public class ChaseState : MonsterState
-{   private Vector3 lastPlayerPos;
-    private List<ChunkPos> chunkPath;
+{
+    private Vector3 lastPlayerPos; // 플레이어의 마지막 위치
+    private List<ChunkPos> chunkPath; // 청크 경로
     private Coroutine chaseCoroutine;
     public ChaseState(Monster monster) : base(monster) 
     {
          lastPlayerPos = new Vector3(0, 0, 0);
      }
 
+    // 추적 상태 시작시 호출
     public override void Enter()
     {
-        Debug.Log("Chase ");
+        Debug.Log("Chase 상태 시작");
         chaseCoroutine = monster.StartCoroutine(ChaseUpdate());
     }
 
+    // 매 프레임마다 호출되는 업데이트
     public override void Update()
     {
+        // 플레이어와의 거리를 체크하여 공격 범위 안에 들어오면 공격 상태로 전환
         if (Vector3.Distance(monster.transform.position, monster.player.position) < monster.data.attackRange)
         {
             monster.ChangeState(new AttackState(monster));
         }        
     }
 
+    // 상태 종료시 호출
     public override void Exit()
     {
         monster.StopAllCoroutines(); 
@@ -93,7 +99,7 @@ public class ChaseState : MonsterState
             if (count >= chunkPath.Count) break;
         }
     }
-       private Vector3Int[] CalculateNextChunkTargets(ChunkPos chunk) // 다음 청크 도착위치 설정
+    private Vector3Int[] CalculateNextChunkTargets(ChunkPos chunk) // 다음 청크 도착위치 설정
     {
         Vector3Int[] targetPos = new Vector3Int[2];
 

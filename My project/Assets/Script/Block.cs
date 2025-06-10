@@ -31,8 +31,10 @@ public class Block
     public static Dictionary<BlockType, Block> blocks = new Dictionary<BlockType, Block>()
     {
         {BlockType.Grass,new Block(Tile.Grass,Tile.GrassSide,Tile.Dirt)},
-        {BlockType.Dirt,new Block(Tile.Dirt) }
-
+        {BlockType.Dirt,new Block(Tile.Dirt) },
+        {BlockType.Trunk,new Block(Tile.Trunk,Tile.TrunkSide,Tile.Trunk)},
+        {BlockType.Leaves,new Block(Tile.Leaves) },
+        {BlockType.Stone,new Block(Tile.Stone) }
     };
 }
-public enum BlockType { Air, Grass, Dirt }
+public enum BlockType { Air, Grass, Dirt ,Trunk, Leaves,Stone}
